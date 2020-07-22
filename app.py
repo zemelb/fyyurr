@@ -12,16 +12,21 @@ import logging
 from logging import Formatter, FileHandler
 from flask_wtf import Form
 from forms import *
+from flask_migrate import Migrate
 #----------------------------------------------------------------------------#
 # App Config.
 #----------------------------------------------------------------------------#
 
 app = Flask(__name__)
+# TODO: connect to a local postgresql database
+app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://zemel@localhost:5432/example'
+app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 moment = Moment(app)
 app.config.from_object('config')
 db = SQLAlchemy(app)
 
-# TODO: connect to a local postgresql database
+# allow for migration?
+migrate = Migrate(app, db)
 
 #----------------------------------------------------------------------------#
 # Models.
@@ -38,8 +43,10 @@ class Venue(db.Model):
     phone = db.Column(db.String(120))
     image_link = db.Column(db.String(500))
     facebook_link = db.Column(db.String(120))
+    genres = db.Column(db.String) #not sure if this is right
 
     # TODO: implement any missing fields, as a database migration using Flask-Migrate
+    # implemented genres, not sure if it's right tho, looking at the Artist genres tho it seems right
 
 class Artist(db.Model):
     __tablename__ = 'Artist'
@@ -56,6 +63,17 @@ class Artist(db.Model):
     # TODO: implement any missing fields, as a database migration using Flask-Migrate
 
 # TODO Implement Show and Artist models, and complete all model relationships and properties, as a database migration.
+
+# creates a collection of Show objects for Artist
+shows = db.relationship("Show", backref="Artist")
+
+class Show(db.Model):
+  __tablename__ = 'Show'
+
+  id = db.Column(db.Integer, primary_key=True)
+  artist_id = db.Column(db.Integer)
+  venue_id = db.Column(db.Integer)
+  start_time = db.Column(db.String)
 
 #----------------------------------------------------------------------------#
 # Filters.

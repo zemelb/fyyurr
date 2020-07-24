@@ -19,7 +19,7 @@ from flask_migrate import Migrate
 
 app = Flask(__name__)
 # TODO: connect to a local postgresql database
-app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://localhost:5432/example'
+app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://localhost:5432/fyyur'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 moment = Moment(app)
 app.config.from_object('config')

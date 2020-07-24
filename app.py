@@ -33,7 +33,7 @@ migrate = Migrate(app, db)
 #----------------------------------------------------------------------------#
 
 class Venue(db.Model):
-    __tablename__ = 'Venue'
+    __tablename__ = 'venues'
 
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String)
@@ -49,7 +49,7 @@ class Venue(db.Model):
     # implemented genres, not sure if it's right tho, looking at the Artist genres tho it seems right
 
 class Artist(db.Model):
-    __tablename__ = 'Artist'
+    __tablename__ = 'artists'
 
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String)
@@ -65,14 +65,14 @@ class Artist(db.Model):
 # TODO Implement Show and Artist models, and complete all model relationships and properties, as a database migration.
 
 # creates a collection of Show objects for Artist
-shows = db.relationship("Show", backref="Artist")
+shows = db.relationship("shows", backref="artists")
 
 class Show(db.Model):
-  __tablename__ = 'Show'
+  __tablename__ = 'shows'
 
   id = db.Column(db.Integer, primary_key=True)
-  artist_id = db.Column(db.Integer, foreign_key('artist.id'), nullable = False)
-  venue_id = db.Column(db.Integer, foreign_key('venue.id'), nullable = False)
+  artist_id = db.Column(db.Integer, foreign_key('artists.id'), nullable = False)
+  venue_id = db.Column(db.Integer, foreign_key('venues.id'), nullable = False)
   start_time = db.Column(db.DateTime, nullable = False)
 
   def __repr__(self):

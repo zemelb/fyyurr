@@ -71,9 +71,12 @@ class Show(db.Model):
   __tablename__ = 'Show'
 
   id = db.Column(db.Integer, primary_key=True)
-  artist_id = db.Column(db.Integer)
-  venue_id = db.Column(db.Integer)
-  start_time = db.Column(db.String)
+  artist_id = db.Column(db.Integer, foreign_key('artist.id'), nullable = False)
+  venue_id = db.Column(db.Integer, foreign_key('venue.id'), nullable = False)
+  start_time = db.Column(db.DateTime, nullable = False)
+
+  def __repr__(self):
+    return '<Show {} {}>'.format(self.artist_id, self.venue_id)
 
 #----------------------------------------------------------------------------#
 # Filters.
@@ -238,6 +241,13 @@ def create_venue_form():
 @app.route('/venues/create', methods=['POST'])
 def create_venue_submission():
   # TODO: insert form data as a new Venue record in the db, instead
+
+  # init venue dictionary
+  # venue = {}
+
+  # try:
+
+
   # TODO: modify data to be the data object returned from db insertion
 
   # on successful db insert, flash success

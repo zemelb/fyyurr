@@ -19,7 +19,7 @@ from flask_migrate import Migrate
 
 app = Flask(__name__)
 # TODO: connect to a local postgresql database
-app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://zemel@localhost:5432/example'
+app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://localhost:5432/example'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 moment = Moment(app)
 app.config.from_object('config')
@@ -71,8 +71,8 @@ class Show(db.Model):
   __tablename__ = 'shows'
 
   id = db.Column(db.Integer, primary_key=True)
-  artist_id = db.Column(db.Integer, foreign_key('artists.id'), nullable = False)
-  venue_id = db.Column(db.Integer, foreign_key('venues.id'), nullable = False)
+  artist_id = db.Column(db.Integer, db.ForeignKey('artists.id'), nullable = False)
+  venue_id = db.Column(db.Integer, db.ForeignKey('venues.id'), nullable = False)
   start_time = db.Column(db.DateTime, nullable = False)
 
   def __repr__(self):

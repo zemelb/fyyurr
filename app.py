@@ -18,7 +18,7 @@ from flask_migrate import Migrate
 #----------------------------------------------------------------------------#
 
 app = Flask(__name__)
-# TODO: connect to a local postgresql database
+# DONE: connect to a local postgresql database
 app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://localhost:5432/fyyur'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 moment = Moment(app)
@@ -43,9 +43,9 @@ class Venue(db.Model):
     phone = db.Column(db.String(120))
     image_link = db.Column(db.String(500))
     facebook_link = db.Column(db.String(120))
-    genres = db.Column(db.String) #not sure if this is right
+    genres = db.Column(db.String)
 
-    # TODO: implement any missing fields, as a database migration using Flask-Migrate
+    # DONE: implement any missing fields, as a database migration using Flask-Migrate
     # implemented genres, not sure if it's right tho, looking at the Artist genres tho it seems right
 
 class Artist(db.Model):
@@ -60,9 +60,9 @@ class Artist(db.Model):
     image_link = db.Column(db.String(500))
     facebook_link = db.Column(db.String(120))
 
-    # TODO: implement any missing fields, as a database migration using Flask-Migrate
+    # DONE: implement any missing fields, as a database migration using Flask-Migrate
 
-# TODO Implement Show and Artist models, and complete all model relationships and properties, as a database migration.
+# DONE: Implement Show and Artist models, and complete all model relationships and properties, as a database migration.
 
 # creates a collection of Show objects for Artist
 shows = db.relationship("shows", backref="artists")
@@ -242,18 +242,22 @@ def create_venue_form():
 def create_venue_submission():
   # TODO: insert form data as a new Venue record in the db, instead
 
+  form = VenueForm()
+
   error = False
+  
+  name = request.form['name']
+  city = request.form['city']
+  state = request.form['state']
+  address = request.form['address']
+  phone = request.form['phone']
+  genres = request.form['genres']
+  facebook_link = request.form['facebook_link']
+
+  venue = venues(name=name, city=city, state=state, address=address, phone=phone, genres=genres, facebook_link=facebook_link)
 
   try:
-    vname = request.form['name']
-    vcity = request.form['city']
-    vstate = request.form['state']
-    vaddress = request.form['address']
-    vphone = request.form['phone']
-    vgenres = request.form['genres']
-    vfacebook = request.form['facebook_link']
-
-    db.session.add()
+    db.session.add(venue)
     db.session.commit()
 
   except:
@@ -271,7 +275,7 @@ def create_venue_submission():
   if not error:
     flash('Venue ' + request.form['name'] + ' was successfully listed!')
   
-  return render_template('/venues.html')
+  return render_template('pages/home.html')
 
 
   # TODO: modify data to be the data object returned from db insertion
@@ -281,7 +285,7 @@ def create_venue_submission():
   # TODO: on unsuccessful db insert, flash an error instead.
   # e.g., flash('An error occurred. Venue ' + data.name + ' could not be listed.')
   # see: http://flask.pocoo.org/docs/1.0/patterns/flashing/
-  return render_template('pages/home.html')
+
 
 @app.route('/venues/<venue_id>', methods=['DELETE'])
 def delete_venue(venue_id):

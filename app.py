@@ -13,6 +13,7 @@ from logging import Formatter, FileHandler
 from flask_wtf import Form
 from forms import *
 from flask_migrate import Migrate
+import sys
 #----------------------------------------------------------------------------#
 # App Config.
 #----------------------------------------------------------------------------#
@@ -43,7 +44,14 @@ class Venue(db.Model):
     phone = db.Column(db.String(120))
     image_link = db.Column(db.String(500))
     facebook_link = db.Column(db.String(120))
-    genres = db.Column(db.String)
+    genres = db.Column(db.ARRAY(db.String))
+    image_link = db.Column(db.String(500))
+    facebook_link = db.Column(db.String(120))
+    website = db.Column(db.String(300))
+    seeking_talent = db.Column(db.Boolean)
+    seeking_description = db.Column(db.String(120))
+    shows = db.relationship('Show', backref='venue', lazy=True)
+
 
     # DONE: implement any missing fields, as a database migration using Flask-Migrate
     # implemented genres, not sure if it's right tho, looking at the Artist genres tho it seems right
@@ -59,6 +67,10 @@ class Artist(db.Model):
     genres = db.Column(db.String(120))
     image_link = db.Column(db.String(500))
     facebook_link = db.Column(db.String(120))
+    website = db.Column(db.String(300))
+    seeking_shows = db.Column(db.Boolean)
+    seeking_description = db.Column(db.String(120))
+    shows = db.relationship('Show', backref='artist', lazy=True)
 
     # DONE: implement any missing fields, as a database migration using Flask-Migrate
 
@@ -240,41 +252,39 @@ def create_venue_form():
 
 @app.route('/venues/create', methods=['POST'])
 def create_venue_submission():
-  # TODO: insert form data as a new Venue record in the db, instead
+  # DONE: insert form data as a new Venue record in the db, instead
 
-  form = VenueForm()
+  form = VenueForm(request.form)
 
   error = False
   
-  name = request.form['name']
-  city = request.form['city']
-  state = request.form['state']
-  address = request.form['address']
-  phone = request.form['phone']
-  genres = request.form['genres']
-  facebook_link = request.form['facebook_link']
-
-  venue = venues(name=name, city=city, state=state, address=address, phone=phone, genres=genres, facebook_link=facebook_link)
-
   try:
+    venue = Venue(
+      name = form.name.data, 
+      city = form.city.data, 
+      state = form.state.data, 
+      address = form.address.data, 
+      phone = form.phone.data, 
+      genres = form.genres.data, 
+      facebook_link = form.facebook_link.data, 
+      # website = form.website.data, 
+      # seeking_talent = form.seeking_talent.data, 
+      # seeking_description = form.seeking_description.data
+    )
+
     db.session.add(venue)
     db.session.commit()
+    flash('Venue ' + request.form['name'] + ' was successfully listed!')
 
   except:
     error = True
     db.session.rollback()
     print(sys.exc_info())
+    flash('An error occured, venue could not be added.')
   
   finally:
     db.session.close()
 
-  if error:
-    flash('An error occured, venue could not be added.')
-
-
-  if not error:
-    flash('Venue ' + request.form['name'] + ' was successfully listed!')
-  
   return render_template('pages/home.html')
 
 
@@ -471,39 +481,39 @@ def create_artist_form():
 @app.route('/artists/create', methods=['POST'])
 def create_artist_submission():
   # called upon submitting the new artist listing form
-  # TODO: insert form data as a new Artist record in the db, instead
-  # TODO: modify data to be the data object returned from db insertion
+  # DONE: insert form data as a new Artist record in the db, instead
+  # DONE: modify data to be the data object returned from db insertion
+
+  form = ArtistForm(request.form)
 
   error = False
+  
   try:
-    aname = request.form['name']
-    acity = request.form['city']
-    astate = request.form['state']
-    aphone = request.form['phone']
-    agenres = request.form['genres']
-    afacebook = request.form['facebook_link']
+    artist = Artist(
+      name = form.name.data, 
+      city = form.city.data, 
+      state = form.state.data, 
+      phone = form.phone.data, 
+      genres = form.genres.data, 
+      facebook_link = form.facebook_link.data, 
+      # website = form.website.data, 
+      # seeking_shows = form.seeking_shows.data, 
+      # seeking_description = form.seeking_description.data
+    )
 
-    db.session.add()
+    db.session.add(artist)
     db.session.commit()
+    flash('Artist ' + request.form['name'] + ' was successfully listed!')
 
   except:
     error = True
     db.session.rollback()
     print(sys.exc_info())
- 
+    flash('An error occured, artist could not be added.')
+  
   finally:
     db.session.close()
-  
-  if not error:
-    # on successful db insert, flash success
-    flash('Artist ' + request.form['name'] + ' was successfully listed!')
- 
-  if error:
-    flash('An error occured.')
- 
-  # TODO: on unsuccessful db insert, flash an error instead.
-  # e.g., flash('An error occurred. Artist ' + data.name + ' could not be listed.')
- 
+
   return render_template('pages/home.html')
 
 
@@ -562,14 +572,34 @@ def create_shows():
 @app.route('/shows/create', methods=['POST'])
 def create_show_submission():
   # called to create new shows in the db, upon submitting new show listing form
-  # TODO: insert form data as a new Show record in the db, instead
+  # DONE: insert form data as a new Show record in the db, instead
 
-  # on successful db insert, flash success
-  flash('Show was successfully listed!')
-  # TODO: on unsuccessful db insert, flash an error instead.
-  # e.g., flash('An error occurred. Show could not be listed.')
-  # see: http://flask.pocoo.org/docs/1.0/patterns/flashing/
+  form = ShowForm(request.form)
+
+  error = False
+  
+  try:
+    show = Show(
+      artist_id = form.artist_id.data, 
+      venue_id = form.venue_id.data, 
+      start_time = form.start_time.data
+    )
+
+    db.session.add(show)
+    db.session.commit()
+    flash('Show was successfully listed!')
+
+  except:
+    error = True
+    db.session.rollback()
+    print(sys.exc_info())
+    flash('An error occured, show could not be added.')
+  
+  finally:
+    db.session.close()
+
   return render_template('pages/home.html')
+
 
 @app.errorhandler(404)
 def not_found_error(error):

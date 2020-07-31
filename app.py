@@ -14,6 +14,7 @@ from flask_wtf import Form
 from forms import *
 from flask_migrate import Migrate
 import sys
+import time
 #----------------------------------------------------------------------------#
 # App Config.
 #----------------------------------------------------------------------------#
@@ -120,27 +121,60 @@ def index():
 def venues():
   # TODO: replace with real venues data.
   #       num_shows should be aggregated based on number of upcoming shows per venue.
-  data=[{
-    "city": "San Francisco",
-    "state": "CA",
-    "venues": [{
-      "id": 1,
-      "name": "The Musical Hop",
-      "num_upcoming_shows": 0,
-    }, {
-      "id": 3,
-      "name": "Park Square Live Music & Coffee",
-      "num_upcoming_shows": 1,
-    }]
-  }, {
-    "city": "New York",
-    "state": "NY",
-    "venues": [{
-      "id": 2,
-      "name": "The Dueling Pianos Bar",
-      "num_upcoming_shows": 0,
-    }]
-  }]
+
+  currenttime = datetime.now().strftime('%Y-%m-%d %H:%S:%M')    # sets currenttime so we know which shows were in the past and which are upcoming
+  venue_city_state = ''
+
+  data = []
+  # queries Venue db for all records
+  venues = Venue.query.all()
+
+  for venue in venues:
+    upcomingshows = venues.shows.filter(Shows.start_time > current_time).all()
+
+    if venue_city_state == venue.city + venue.state:
+      data[len(data) - 1]["venues"].append({
+        "id": venue.id, 
+        "name": venue.name,
+        "num_upcoming_shows": len(upcomingshows)
+      })
+    else:
+      venue_city_state == venue.city + venue.state
+      data.append({
+        "city": venue.city, 
+        "state": venue.state, 
+        "venues": [{
+          "id": venue.id, 
+          "name": venue.name, 
+          "num_upcoming_shows": len(upcomingshows)
+        }]
+      })
+
+
+
+  
+  
+  # data=[{
+  #   "city": "San Francisco",
+  #   "state": "CA",
+  #   "venues": [{
+  #     "id": 1,
+  #     "name": "The Musical Hop",
+  #     "num_upcoming_shows": 0,
+  #   }, {
+  #     "id": 3,
+  #     "name": "Park Square Live Music & Coffee",
+  #     "num_upcoming_shows": 1,
+  #   }]
+  # }, {
+  #   "city": "New York",
+  #   "state": "NY",
+  #   "venues": [{
+  #     "id": 2,
+  #     "name": "The Dueling Pianos Bar",
+  #     "num_upcoming_shows": 0,
+  #   }]
+  # }]
   return render_template('pages/venues.html', areas=data);
 
 @app.route('/venues/search', methods=['POST'])

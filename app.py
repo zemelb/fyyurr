@@ -130,7 +130,7 @@ def venues():
   venues = Venue.query.all()
 
   for venue in venues:
-    upcomingshows = venues.shows.filter(Shows.start_time > current_time).all()
+    upcomingshows = venue.shows.filter(Shows.start_time > current_time).all()
 
     if venue_city_state == venue.city + venue.state:
       data[len(data) - 1]["venues"].append({

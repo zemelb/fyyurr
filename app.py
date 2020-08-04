@@ -514,22 +514,24 @@ def shows():
   # displays list of shows at /shows
   # TODO: replace with real venues data.
   #       num_shows should be aggregated based on number of upcoming shows per venue.
+
+  current_time = datetime.now()
+
+  data = []
+
+  allshows = Show.query.all()
+
+  for show in allshows:
+    if show.start_time > current_time:
+      data.append({
+        "venue_id": show.venue_id,
+        "venue_name": venue.name,
+        "artist_id": show.artist_id,
+        "artist_name": artist.name,
+        "artist_image_link": artist.image_link,
+        "start_time": show.start_time
+      })
   
-  allshows = Show.query.options(db.joinedload('Show.Venue'), db.joinedload('Show.Artist')).all()
-  data = list(map(Show.detail, allshows))
-
-
-    # else:
-    #   venue_city_state == venue.city + venue.state
-    #   data.append({
-    #     "city": venue.city, 
-    #     "state": venue.state, 
-    #     "venues": [{
-    #       "id": venue.id, 
-    #       "name": venue.name, 
-    #       "num_upcoming_shows": len(filtered_upcomingshows)
-    #     }]
-    #   })
   
   # data=[{
   #   "venue_id": 1,

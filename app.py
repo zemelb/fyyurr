@@ -185,8 +185,8 @@ def show_venue(venue_id):
   if venuequery:
     venue_details = Venue
 
-    data = {
-      "id": venue_details.id, 
+    data = {(
+      "id" = venue_details.id, 
       "name": venue_details.name, 
       "genres": venue_details.genres, 
       "addres": venue_details.address, 
@@ -198,8 +198,7 @@ def show_venue(venue_id):
       "seeking_talent": venue_details.seeking_talent, 
       "seeking_description": venue_details.seeking_description, 
       "image_link": venue_details.image_link, 
-      
-    }
+      )}
   
   # data1={
   #   "id": 1,
@@ -515,7 +514,7 @@ def shows():
   # TODO: replace with real venues data.
   #       num_shows should be aggregated based on number of upcoming shows per venue.
 
-  current_time = datetime.now()
+  # current_time = datetime.now()
 
   data = []
 
@@ -525,15 +524,15 @@ def shows():
     artist = Artist.query.get(show.artist_id)
     venue = Venue.query.get(show.venue_id)
 
-    if show.start_time > current_time:
-      data.append({
-        "venue_id": show.venue_id,
-        "venue_name": venue.name,
-        "artist_id": show.artist_id,
-        "artist_name": artist.name,
-        "artist_image_link": artist.image_link,
-        "start_time": show.start_time
-      })
+    # if show.start_time > current_time:
+    data.append({
+      "venue_id": show.venue_id,
+      "venue_name": venue.name,
+      "artist_id": show.artist_id,
+      "artist_name": artist.name,
+      "artist_image_link": artist.image_link,
+      "start_time": show.start_time
+    })
   
   
   # data=[{

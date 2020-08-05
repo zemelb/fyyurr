@@ -185,8 +185,8 @@ def show_venue(venue_id):
   if venuequery:
     venue_details = Venue
 
-    data = {(
-      "id" = venue_details.id, 
+    data = {
+      "id": venue_details.id, 
       "name": venue_details.name, 
       "genres": venue_details.genres, 
       "addres": venue_details.address, 
@@ -198,7 +198,7 @@ def show_venue(venue_id):
       "seeking_talent": venue_details.seeking_talent, 
       "seeking_description": venue_details.seeking_description, 
       "image_link": venue_details.image_link, 
-      )}
+      }
   
   # data1={
   #   "id": 1,

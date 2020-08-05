@@ -522,6 +522,9 @@ def shows():
   allshows = Show.query.all()
 
   for show in allshows:
+    artist = Artist.query.get(show.artist_id)
+    venue = Venue.query.get(show.venue_id)
+
     if show.start_time > current_time:
       data.append({
         "venue_id": show.venue_id,

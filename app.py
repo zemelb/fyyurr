@@ -179,11 +179,14 @@ def search_venues():
 @app.route('/venues/<int:venue_id>')
 def show_venue(venue_id):
   # shows the venue page with the given venue_id
-  # DONE: replace with real venue data from the venues table, using venue_id
-  # NOT WORKING YET
+  # TODO: replace with real venue data from the venues table, using venue_id
+  # JUST NEED TO MAKE UPCOMING AND PAST SHOWS APPEAR THEN DONE
   
   # query db for the venue's ID
   venuequery = Venue.query.get(venue_id)
+
+  shows = Show.query.all()
+  filtshows = [show for show in shows if show.venue_id == venue_id]
 
   # if it finds a venue with that ID
   if venuequery:
@@ -202,8 +205,22 @@ def show_venue(venue_id):
       "seeking_talent": venue_details.seeking_talent, 
       "seeking_description": venue_details.seeking_description, 
       "image_link": venue_details.image_link, 
+      # "past_shows": [{
+      #   "artist_id": show.artist_id, 
+      #   "artist_name": artist.
+      # }]
       }
  
+# "past_shows": [{
+#        "artist_id": 4,
+#        "artist_name": "Guns N Petals",
+#        "artist_image_link": "https://images.unsplash.com/photo-1549213783-8284d0336c4f?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=300&q=80",
+#        "start_time": "2019-05-21T21:30:00.000Z"
+#      }],
+#      "upcoming_shows": [],
+#      "past_shows_count": 1,
+#      "upcoming_shows_count": 0,
+
   return render_template('pages/show_venue.html', venue=data)
 
 
@@ -309,7 +326,7 @@ def search_artists():
 @app.route('/artists/<int:artist_id>')
 def show_artist(artist_id):
   # shows the venue page with the given venue_id
-  # TODO: replace with real venue data from the venues table, using venue_id
+  # DONE: replace with real venue data from the venues table, using venue_id
   
   # query db for the artist's ID
   artistquery = Artist.query.get(artist_id)
